@@ -11,6 +11,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import PartyDetails from './pages/PartyDetails.js';
 import AddGuestsPage from './pages/AddGuestsPage.js';
+import { Navigate } from 'react-router-dom';
+import LandingPage from './pages/LandingPage.js';
 
 function AppWrapper() {
   const location = useLocation();
@@ -26,7 +28,7 @@ function AppWrapper() {
   const signOutHandler = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    window.location.href = '/auth';
+    window.location.href = '/landing';
   };
 
   return (
@@ -59,7 +61,7 @@ function AppWrapper() {
                   </NavDropdown>
                 </>
               ) : (
-                <Link to="/login" className="nav-link">
+                <Link to="/auth" className="nav-link">
                   Log in
                 </Link>
               )}
@@ -70,9 +72,22 @@ function AppWrapper() {
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
-        <Route path="/party" element={<AddPartyPage />} />
-        <Route path="/parties/:id" element={<PartyDetails />} />
-        <Route path="/parties/:id/guests" element={<AddGuestsPage />} />
+        <Route
+          path="/party"
+          element={isLoggedIn() ? <AddPartyPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/parties/:id"
+          element={isLoggedIn() ? <PartyDetails /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/parties/:id/guests"
+          element={isLoggedIn() ? <AddGuestsPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/landing"
+          element={isLoggedIn() ? <Navigate to="/" /> : <LandingPage />}
+        />
       </Routes>
     </>
   );
